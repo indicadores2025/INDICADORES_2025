@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module">
+    <h2>💰 Gestión de Presupuestos</h2>
+
+    <form method="POST">
+        <input type="text" name="nombre" placeholder="Nombre del Presupuesto" required>
+        <input type="number" name="monto_total" placeholder="Monto Total" min="0" required step="0.01">
+
+        <div style="display:flex;gap:30px;">
+            <div>
+                <label><b>Meses asociados:</b></label><br>
+                {% for m in ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"] %}
+                    <input type="checkbox" name="meses" value="{{ m }}"> {{ m }}<br>
+                {% endfor %}
+            </div>
+            <div>
+                <label><b>Años asociados:</b></label><br>
+                {% for a in range(2024,2031) %}
+                    <input type="checkbox" name="años" value="{{ a }}"> {{ a }}<br>
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit">💾 Crear Presupuesto</button>
+    </form>
+
+    <hr>
+
+    <h3>📊 Presupuestos Actuales</h3>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Meses/Años Asociados</th>
+            <th>Monto Total</th>
+            <th>Ejecutado</th>
+            <th>Restante</th>
+            <th>% Ejecutado</th>
+        </tr>
+        {% for p in presupuestos %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.nombre }}</td>
+            <td>{{ p.meses }}</td>
+            <td>${{ "{:,.0f}".format(p.monto_total or 0) }}</td>
+            <td>${{ "{:,.0f}".format(p.ejecutado or 0) }}</td>
+            <td>${{ "{:,.0f}".format(p.restante or 0) }}</td>
+            <td>{{ "%.1f"|format(p.porcentaje or 0) }}%</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module">
+    <h2>Gestión de Preguntas</h2>
+
+    <!-- Formulario para agregar nueva pregunta -->
+    <form method="POST" style="margin-bottom: 20px;">
+        <textarea name="texto" rows="4" maxlength="355" placeholder="Texto de la pregunta (máx. 355 caracteres)" required></textarea>
+
+        <div class="form-inline">
+            <select name="tipo" required>
+                <option value="Texto">Texto</option>
+                <option value="Monto">Monto</option>
+                <option value="Decimal">Decimal</option>
+                <option value="Porcentaje">Porcentaje</option>
+                <option value="CLP">CLP</option>
+            </select>
+
+            <select name="presupuesto_id" required>
+                <option value="">-- Presupuesto --</option>
+                {% for p in presupuestos %}
+                <option value="{{ p.id }}">{{ p.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="unidad_id" required>
+                <option value="">-- Unidad --</option>
+                {% for u in unidades %}
+                <option value="{{ u.id }}">{{ u.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="usuario_id" required>
+                <option value="">-- Usuario --</option>
+                {% for us in usuarios %}
+                <option value="{{ us.id }}">{{ us.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <label><input type="checkbox" name="afecta_presupuesto"> Afecta Presupuesto</label>
+            <button type="submit">Agregar</button>
+        </div>
+    </form>
+
+    <!-- Tabla de preguntas -->
+    <table border="1" width="100%" cellspacing="0" cellpadding="8">
+        <tr style="background-color:#f97316;color:white;">
+            <th>ID</th>
+            <th style="width:40%;">Pregunta</th>
+            <th>Tipo</th>
+            <th>Presupuesto</th>
+            <th>Unidad</th>
+            <th>Usuario</th>
+            <th>Afecta</th>
+            <th>Activo</th>
+            <th>Acciones</th>
+        </tr>
+        {% for p in preguntas %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td style="white-space:pre-wrap; text-align:left; max-width:420px;">{{ p.texto }}</td>
+            <td>{{ p.tipo }}</td>
+            <td>{{ p.presupuesto }}</td>
+            <td>{{ p.unidad }}</td>
+            <td>{{ p.usuario }}</td>
+            <td>{{ 'Sí' if p.afecta_presupuesto else 'No' }}</td>
+            <td>{{ 'Sí' if p.activo else 'No' }}</td>
+            <td>
+                <a href="/preguntas/editar/{{ p.id }}">✏️ Editar</a> |
+                <a href="/preguntas/desactivar/{{ p.id }}">{{ 'Desactivar' if p.activo else 'Activar' }}</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

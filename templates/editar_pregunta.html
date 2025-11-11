@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module">
+    <h2>Editar Pregunta</h2>
+
+    <form method="POST" style="margin-bottom: 20px;">
+        <textarea name="texto" rows="4" maxlength="355" required>{{ pregunta.texto }}</textarea>
+
+        <div class="form-inline">
+            <select name="tipo" required>
+                {% for t in ["Texto","Monto","Decimal","Porcentaje","CLP"] %}
+                    <option value="{{ t }}" {% if pregunta.tipo == t %}selected{% endif %}>{{ t }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="presupuesto_id" required>
+                {% for p in presupuestos %}
+                    <option value="{{ p.id }}" {% if p.id == pregunta.presupuesto_id %}selected{% endif %}>{{ p.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="unidad_id" required>
+                {% for u in unidades %}
+                    <option value="{{ u.id }}" {% if u.id == pregunta.unidad_id %}selected{% endif %}>{{ u.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="usuario_id" required>
+                {% for us in usuarios %}
+                    <option value="{{ us.id }}" {% if us.id == pregunta.usuario_id %}selected{% endif %}>{{ us.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <label>
+                <input type="checkbox" name="afecta_presupuesto" {% if pregunta.afecta_presupuesto %}checked{% endif %}>
+                Afecta Presupuesto
+            </label>
+
+            <button type="submit">Guardar Cambios</button>
+            <a href="/preguntas" style="margin-left:15px;">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SDGDP Indicadores 2025</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <img src="/static/img/logo.png" alt="Logo" class="logo">
+            <h1>SDGDP INDICADORES 2025</h1>
+        </div>
+        {% if session["usuario"] %}
+        <div class="user-info">
+            <span>👤 {{ session["usuario"] }}</span>
+            <a href="/logout" class="logout-btn">Cerrar sesión</a>
+        </div>
+        {% endif %}
+    </header>
+
+    <nav class="navbar">
+        {% if session["tipo"] == "admin" %}
+            <a href="/admin">🏠 Inicio</a>
+            <a href="/unidad">🏢 Unidad</a>
+            <a href="/usuarios">👥 Usuarios</a>
+            <a href="/presupuesto">💰 Presupuesto</a>
+            <a href="/periodo">🗓️ Periodo</a>
+            <a href="/preguntas">📝 Preguntas</a>
+            <a href="/graficos">📊 Gráficos</a>
+            <a href="/auditoria">🕵️ Auditoría</a>
+        {% else %}
+            <a href="/usuario">🏠 Inicio</a>
+            <a href="/responder">📝 Responder</a>
+            <a href="/graficos">📈 Gráficos</a>
+        {% endif %}
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 Sistema de Gestión de Indicadores - HGF</p>
+    </footer>
+</body>
+</html>

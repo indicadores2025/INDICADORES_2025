@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module">
+    <h2>📝 Responder Preguntas</h2>
+
+    {% if not periodo_abierto %}
+        <div class="alert-warning">
+            ⚠️ No hay un periodo abierto. No es posible responder preguntas.
+        </div>
+    {% else %}
+        <div class="alert-info">
+            📅 Periodo abierto: <b>{{ periodo.mes }} / {{ periodo.año }}</b>
+        </div>
+
+        {% if preguntas %}
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Pregunta</th>
+                    <th>Tipo</th>
+                    <th>Presupuesto</th>
+                    <th>Unidad</th>
+                    <th>Afecta Presupuesto</th>
+                    <th>Respuesta</th>
+                    <th>Acción</th>
+                </tr>
+                {% for p in preguntas %}
+                <tr>
+                    <td>{{ p.id }}</td>
+                    <td style="white-space:pre-wrap;max-width:380px;">{{ p.texto }}</td>
+                    <td>{{ p.tipo }}</td>
+                    <td>{{ p.presupuesto }}</td>
+                    <td>{{ p.unidad }}</td>
+                    <td>{{ 'Sí' if p.afecta_presupuesto else 'No' }}</td>
+
+                    {% if p.respuesta %}
+                        <!-- Mostrar respuesta bloqueada -->
+                        <td><input type="text" value="{{ p.respuesta }}" readonly></td>
+                        <td>✅ Enviada</td>
+                    {% else %}
+                        <!-- Permitir responder -->
+                        <form method="POST">
+                            <td>
+                                <input type="text" name="valor" required placeholder="Escribe tu respuesta">
+                                <input type="hidden" name="pregunta_id" value="{{ p.id }}">
+                            </td>
+                            <td><button type="submit">💾 Enviar</button></td>
+                        </form>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <div class="alert-warning">⚠️ No hay preguntas asignadas a este usuario.</div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

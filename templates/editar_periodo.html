@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module">
+    <h2>Editar Periodo</h2>
+
+    <form method="POST" class="form-inline">
+        <select name="mes" required>
+            {% for m in ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"] %}
+            <option value="{{ m }}" {% if m == periodo.mes %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+        </select>
+        <input type="number" name="año" value="{{ periodo.año }}" required>
+        <button type="submit">Guardar</button>
+        <a href="/periodo">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module">
+    <h2>Gestión de Usuarios</h2>
+
+    <form method="POST" class="form-inline">
+        <input type="text" name="nombre" placeholder="Nombre de usuario" required>
+        <input type="password" name="contrasena" placeholder="Contraseña" required>
+
+        <select name="tipo" required>
+            <option value="usuario">Usuario</option>
+            <option value="admin">Administrador</option>
+        </select>
+
+        <select name="unidad_id" required>
+            <option value="">-- Unidad --</option>
+            {% for u in unidades %}
+            <option value="{{ u.id }}">{{ u.nombre }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Agregar Usuario</button>
+    </form>
+
+    <form method="GET" class="form-inline" style="margin-top:10px;">
+        <input type="text" name="search" placeholder="Buscar usuario..." value="{{ search }}">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <table>
+        <tr>
+            <th>ID</th><th>Nombre</th><th>Tipo</th><th>Unidad</th><th>Activo</th><th>Acción</th>
+        </tr>
+        {% for u in users %}
+        <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.nombre }}</td>
+            <td>{{ u.tipo }}</td>
+            <td>{{ u.unidad_nombre if u.unidad_nombre else 'Sin Unidad' }}</td>
+            <td>{{ 'Sí' if u.activo else 'No' }}</td>
+            <td>
+                <a href="/usuarios/desactivar/{{ u.id }}">{{ 'Desactivar' if u.activo else 'Activar' }}</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

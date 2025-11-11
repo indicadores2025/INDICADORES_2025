@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module">
+    <h2>Gestión de Periodos</h2>
+
+    {% if abierto %}
+        <div class="alert-info">🔓 Periodo Abierto: <b>{{ abierto.mes }}/{{ abierto.año }}</b></div>
+    {% else %}
+        <div class="alert-warning">⚠️ No hay periodo abierto actualmente.</div>
+    {% endif %}
+
+    <form method="POST" class="form-inline">
+        <select name="mes" required>
+            {% for m in ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"] %}
+            <option value="{{ m }}">{{ m }}</option>
+            {% endfor %}
+        </select>
+        <input type="number" name="año" placeholder="Año" required min="2000" max="2100">
+        <button type="submit">📅 Abrir Nuevo</button>
+    </form>
+
+    <table>
+        <tr>
+            <th>ID</th><th>Mes</th><th>Año</th><th>Estado</th><th>Acciones</th>
+        </tr>
+        {% for p in periodos %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.mes }}</td>
+            <td>{{ p.año }}</td>
+            <td>{{ 'Abierto' if p.abierto else 'Cerrado' }}</td>
+            <td>
+                {% if not p.abierto %}
+                    <a href="/periodo/abrir/{{ p.id }}">✅ Abrir</a> |
+                {% endif %}
+                {% if p.abierto %}
+                    <a href="/periodo/cerrar/{{ p.id }}">🔒 Cerrar</a> |
+                {% endif %}
+                <a href="/periodo/editar/{{ p.id }}">✏️ Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

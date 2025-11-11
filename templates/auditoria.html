@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module">
+    <h2>🕵️ Auditoría de Respuestas</h2>
+
+    <form method="GET" class="form-inline">
+        <select name="unidad_id">
+            <option value="">-- Unidad --</option>
+            {% for u in unidades %}
+                <option value="{{ u.id }}" {% if filtros.unidad_id == u.id|string %}selected{% endif %}>{{ u.nombre }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="usuario_id">
+            <option value="">-- Usuario --</option>
+            {% for us in usuarios %}
+                <option value="{{ us.id }}" {% if filtros.usuario_id == us.id|string %}selected{% endif %}>{{ us.nombre }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="mes">
+            <option value="">-- Mes --</option>
+            {% for m in ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"] %}
+                <option value="{{ m }}" {% if filtros.mes == m %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="number" name="año" placeholder="Año" min="2000" max="2100" value="{{ filtros.año }}">
+        <button type="submit">🔍 Filtrar</button>
+    </form>
+
+    <hr>
+
+    {% if respuestas %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Pregunta</th>
+            <th>Unidad</th>
+            <th>Usuario</th>
+            <th>Presupuesto</th>
+            <th>Mes/Año</th>
+            <th>Valor</th>
+            <th>Fecha de Ingreso</th>
+        </tr>
+        {% for r in respuestas %}
+        <tr>
+            <td>{{ r.id }}</td>
+            <td style="max-width:350px;white-space:pre-wrap;">{{ r.pregunta }}</td>
+            <td>{{ r.unidad }}</td>
+            <td>{{ r.usuario }}</td>
+            <td>{{ r.presupuesto }}</td>
+            <td>{{ r.mes }}/{{ r.año }}</td>
+            <td>{{ r.valor }}</td>
+            <td>{{ r.fecha_ingreso }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div class="alert-warning">⚠️ No se encontraron respuestas con los filtros seleccionados.</div>
+    {% endif %}
+</div>
+{% endblock %}

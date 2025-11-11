@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module">
+  <h2>📊 Panel de Gráficos e Indicadores</h2>
+
+  <!-- ===================== -->
+  <!-- GRAFICO 1: ANUAL -->
+  <!-- ===================== -->
+  <h3>📈 Gráfico 1 — Estadísticas del Año</h3>
+  <form method="POST">
+    <input type="hidden" name="accion" value="grafico1">
+    <label>Tipo de gráfico:</label>
+    <select name="tipo_grafico" required>
+      <option value="bar">Barras</option>
+      <option value="line">Líneas</option>
+      <option value="pie">Torta</option>
+    </select>
+
+    <label>Pregunta:</label>
+    <select name="pregunta" required>
+      {% for p in preguntas %}
+      <option value="{{ p.id }}">{{ p.texto }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Unidad:</label>
+    <select name="unidad">
+      <option value="0">Todas</option>
+      {% for u in unidades %}
+      <option value="{{ u.id }}">{{ u.nombre }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Usuario:</label>
+    <select name="usuario">
+      <option value="0">Todos</option>
+      {% for usr in usuarios %}
+      <option value="{{ usr.id }}">{{ usr.nombre }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Año:</label>
+    <select name="anio">
+      {% for a in range(2024, 2031) %}
+      <option value="{{ a }}" {% if a == anio_actual %}selected{% endif %}>{{ a }}</option>
+      {% endfor %}
+    </select>
+
+    <button type="submit">Generar Gráfico 1</button>
+  </form>
+
+  {% if datos1 %}
+  <div style="width:80%; margin:auto;">
+    <h4>Resultados del año {{ datos1.anio }}</h4>
+    <canvas id="grafico1"></canvas>
+  </div>
+  {% endif %}
+
+  <hr style="margin:40px 0;">
+
+  <!-- ===================== -->
+  <!-- GRAFICO 2: COMPARATIVO -->
+  <!-- ===================== -->
+  <h3>📊 Gráfico 2 — Comparativo entre dos períodos</h3>
+  <form method="POST">
+    <input type="hidden" name="accion" value="grafico2">
+
+    <label>Tipo de gráfico:</label>
+    <select name="tipo_grafico2" required>
+      <option value="bar">Barras</option>
+      <option value="line">Líneas</option>
+      <option value="pie">Torta</option>
+    </select>
+
+    <label>Pregunta:</label>
+    <select name="pregunta2" required>
+      {% for p in preguntas %}
+      <option value="{{ p.id }}">{{ p.texto }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Unidad:</label>
+    <select name="unidad2">
+      <option value="0">Todas</option>
+      {% for u in unidades %}
+      <option value="{{ u.id }}">{{ u.nombre }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Usuario:</label>
+    <select name="usuario2">
+      <option value="0">Todos</option>
+      {% for usr in usuarios %}
+      <option value="{{ usr.id }}">{{ usr.nombre }}</option>
+      {% endfor %}
+    </select>
+
+    <div style="display:flex; gap:10px;">
+      <div>
+        <label>Mes 1:</label>
+        <select name="mes1" required>
+          {% for m in ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"] %}
+          <option value="{{ m }}">{{ m }}</option>
+          {% endfor %}
+        </select>
+        <label>Año 1:</label>
+        <select name="anio1" required>
+          {% for a in range(2024, 2031) %}
+          <option value="{{ a }}">{{ a }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label>Mes 2:</label>
+        <select name="mes2" required>
+          {% for m in ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"] %}
+          <option value="{{ m }}">{{ m }}</option>
+          {% endfor %}
+        </select>
+        <label>Año 2:</label>
+        <select name="anio2" required>
+          {% for a in range(2024, 2031) %}
+          <option value="{{ a }}">{{ a }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <button type="submit">Generar Gráfico 2</button>
+  </form>
+
+  {% if datos2 %}
+  <div style="width:70%; margin:auto;">
+    <h4>Comparación: {{ datos2.mes1 }} {{ datos2.anio1 }} vs {{ datos2.mes2 }} {{ datos2.anio2 }}</h4>
+    <p><b>Diferencia:</b> {{ datos2.diferencia }}</p>
+    <canvas id="grafico2"></canvas>
+  </div>
+  {% endif %}
+</div>
+
+{% if datos1 or datos2 %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endif %}
+
+{% if datos1 %}
+<script>
+new Chart(document.getElementById('grafico1'), {
+  type: '{{ datos1.tipo_grafico }}',
+  data: {
+    labels: {{ datos1.labels | tojson }},
+    datasets: [{
+      label: 'Promedio mensual ({{ datos1.anio }})',
+      data: {{ datos1.valores | tojson }},
+      borderColor: '#f97316',
+      backgroundColor: 'rgba(249,115,22,0.6)',
+      borderWidth: 2
+    }]
+  },
+  options: { scales: { y: { beginAtZero: true } } }
+});
+</script>
+{% endif %}
+
+{% if datos2 %}
+<script>
+new Chart(document.getElementById('grafico2'), {
+  type: '{{ datos2.tipo_grafico }}',
+  data: {
+    labels: {{ datos2.labels | tojson }},
+    datasets: [{
+      label: 'Comparación de valores',
+      data: {{ datos2.valores | tojson }},
+      borderColor: ['#f97316','#2563eb'],
+      backgroundColor: ['rgba(249,115,22,0.6)','rgba(37,99,235,0.6)'],
+      borderWidth: 2
+    }]
+  },
+  options: { scales: { y: { beginAtZero: true } } }
+});
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module">
+    <h2>👋 Bienvenido {{ usuario }}</h2>
+    <p>Este es tu panel de usuario. Desde aquí puedes responder tus preguntas, ver tus gráficos personales y revisar tu historial.</p>
+
+    <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 20px;">
+        <a href="/responder" class="button">📝 Responder Preguntas</a>
+        <a href="/graficos" class="button">📊 Mis Gráficos</a>
+        <a href="/historial" class="button">🕒 Historial de Respuestas</a>
+        <a href="/cambiar_contrasena" class="button">🔐 Cambiar Contraseña</a>
+    </div>
+
+    <hr style="margin: 40px 0;">
+
+    <h3>📅 Estado actual</h3>
+    <p>🗓️ Fecha actual: {{ now().strftime("%d/%m/%Y") }}</p>
+    <p>💬 Si tienes dudas o problemas, contacta al administrador del sistema.</p>
+</div>
+{% endblock %}

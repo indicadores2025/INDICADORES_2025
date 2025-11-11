@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module">
+    <h2>🏠 Panel Principal — Administrador</h2>
+    <p>Bienvenido <b>{{ usuario }}</b>. Aquí puedes ver el resumen general del sistema.</p>
+
+    <!-- Tarjetas resumen presupuestario -->
+    <div class="dashboard-grid">
+        <div class="card orange">
+            <h3>💰 Presupuesto Total</h3>
+            <p>${{ "{:,.0f}".format(resumen.total) }}</p>
+        </div>
+        <div class="card blue">
+            <h3>💸 Ejecutado</h3>
+            <p>${{ "{:,.0f}".format(resumen.ejecutado) }}</p>
+        </div>
+        <div class="card green">
+            <h3>📉 Porcentaje Ejecutado</h3>
+            <p>{{ "%.2f"|format(resumen.porcentaje) }}%</p>
+        </div>
+        <div class="card red">
+            <h3>🧾 Presupuesto Restante</h3>
+            <p>${{ "{:,.0f}".format(resumen.restante) }}</p>
+        </div>
+    </div>
+
+    <hr>
+<hr>
+<h3>📊 Detalle de Presupuestos</h3>
+
+<table>
+    <tr>
+        <th>Nombre</th>
+        <th>Monto Total</th>
+        <th>Ejecutado</th>
+        <th>Restante</th>
+        <th>% Ejecutado</th>
+    </tr>
+    {% for p in resumen.detalle %}
+    <tr>
+        <td>{{ p.nombre }}</td>
+        <td>${{ "{:,.0f}".format(p.monto_total or 0) }}</td>
+        <td>${{ "{:,.0f}".format(p.ejecutado or 0) }}</td>
+        <td>${{ "{:,.0f}".format(p.restante or 0) }}</td>
+        <td>{{ "%.1f"|format(p.porcentaje or 0) }}%</td>
+    </tr>
+    {% endfor %}
+</table>
+
+    <h3>📊 Últimas estadísticas</h3>
+    <p>Puedes revisar los gráficos completos desde el módulo <b>Gráficos</b> o los detalles en <b>Auditoría</b>.</p>
+</div>
+{% endblock %}
