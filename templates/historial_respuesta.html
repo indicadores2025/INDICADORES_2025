@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module">
+    <h2>📜 Historial de Cambios</h2>
+
+    <table border="1" width="100%" cellspacing="0" cellpadding="8">
+        <tr style="background-color:#007bff;color:white;">
+            <th>Fecha</th>
+            <th>Administrador</th>
+            <th>Valor Anterior</th>
+            <th>Valor Nuevo</th>
+        </tr>
+        {% for h in historial %}
+        <tr>
+            <td>{{ h.fecha_modificacion }}</td>
+            <td>{{ h.admin }}</td>
+            <td>{{ h.valor_anterior }}</td>
+            <td>{{ h.valor_nuevo }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4">No hay registros de modificaciones.</td></tr>
+        {% endfor %}
+    </table>
+
+    <br>
+    <a href="/auditoria" class="btn">⬅️ Volver</a>
+</div>
+{% endblock %}

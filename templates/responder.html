@@ -13,6 +13,7 @@
         </div>
 
         {% if preguntas %}
+        <form method="POST">
             <table>
                 <tr>
                     <th>ID</th>
@@ -22,7 +23,6 @@
                     <th>Unidad</th>
                     <th>Afecta Presupuesto</th>
                     <th>Respuesta</th>
-                    <th>Acción</th>
                 </tr>
                 {% for p in preguntas %}
                 <tr>
@@ -35,21 +35,25 @@
 
                     {% if p.respuesta %}
                         <!-- Mostrar respuesta bloqueada -->
-                        <td><input type="text" value="{{ p.respuesta }}" readonly></td>
-                        <td>✅ Enviada</td>
+                        <td>
+                            <input type="text" value="{{ p.respuesta }}" readonly style="background:#eee;">
+                            <span style="color:green;">✅ Enviada</span>
+                        </td>
                     {% else %}
-                        <!-- Permitir responder -->
-                        <form method="POST">
-                            <td>
-                                <input type="text" name="valor" required placeholder="Escribe tu respuesta">
-                                <input type="hidden" name="pregunta_id" value="{{ p.id }}">
-                            </td>
-                            <td><button type="submit">💾 Enviar</button></td>
-                        </form>
+                        <!-- Campo editable -->
+                        <td>
+                            <input type="text" name="pregunta_{{ p.id }}" placeholder="Escribe tu respuesta..." required>
+                        </td>
                     {% endif %}
                 </tr>
                 {% endfor %}
             </table>
+
+            <br>
+            <button type="submit" style="padding:10px 20px; background:#f97316; color:white; border:none; border-radius:6px; cursor:pointer;">
+                💾 Guardar todas las respuestas
+            </button>
+        </form>
         {% else %}
             <div class="alert-warning">⚠️ No hay preguntas asignadas a este usuario.</div>
         {% endif %}

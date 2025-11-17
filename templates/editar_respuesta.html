@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module">
+    <h2>✏️ Editar Respuesta</h2>
+
+    <form method="POST" style="max-width:500px;">
+        <p><b>Pregunta:</b> {{ respuesta.pregunta }}</p>
+        <p><b>Usuario:</b> {{ respuesta.usuario }}</p>
+        <p><b>Periodo:</b> {{ respuesta.mes }} / {{ respuesta.año }}</p>
+
+        <label for="valor"><b>Nuevo Valor:</b></label><br>
+        <input type="text" name="valor" id="valor" value="{{ respuesta.valor }}" required style="width:100%; padding:8px;">
+
+        <br><br>
+        <button type="submit" style="background:#f97316;color:white;padding:10px 20px;border:none;border-radius:6px;">💾 Guardar Cambios</button>
+        <a href="/auditoria" style="margin-left:10px;color:#333;">⬅️ Volver</a>
+    </form>
+</div>
+{% endblock %}

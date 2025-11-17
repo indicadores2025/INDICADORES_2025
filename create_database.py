@@ -57,11 +57,12 @@ CREATE TABLE IF NOT EXISTS preguntas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     texto TEXT NOT NULL,
     tipo TEXT,
-    presupuesto_id INTEGER,
+    presupuesto_id INTEGER NULL,
     unidad_id INTEGER,
     usuario_id INTEGER,
     afecta_presupuesto INTEGER DEFAULT 0,
     activo INTEGER DEFAULT 1,
+    fecha_termino TEXT,
     FOREIGN KEY (presupuesto_id) REFERENCES presupuesto (id),
     FOREIGN KEY (unidad_id) REFERENCES unidad (id),
     FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
@@ -80,6 +81,20 @@ CREATE TABLE IF NOT EXISTS respuestas (
     fecha_ingreso TEXT,
     FOREIGN KEY (pregunta_id) REFERENCES preguntas (id),
     FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
+)
+""")
+
+# ---------- TABLA HISTORIAL DE AUDITORÍA ----------
+cur.execute("""
+CREATE TABLE IF NOT EXISTS historial_auditoria (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    respuesta_id INTEGER,
+    usuario_admin_id INTEGER,
+    valor_anterior TEXT,
+    valor_nuevo TEXT,
+    fecha_modificacion TEXT,
+    FOREIGN KEY (respuesta_id) REFERENCES respuestas (id),
+    FOREIGN KEY (usuario_admin_id) REFERENCES usuarios (id)
 )
 """)
 

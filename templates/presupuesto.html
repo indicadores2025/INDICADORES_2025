@@ -36,6 +36,7 @@
             <th>Ejecutado</th>
             <th>Restante</th>
             <th>% Ejecutado</th>
+            <th>Acciones</th>
         </tr>
         {% for p in presupuestos %}
         <tr>
@@ -46,6 +47,10 @@
             <td>${{ "{:,.0f}".format(p.ejecutado or 0) }}</td>
             <td>${{ "{:,.0f}".format(p.restante or 0) }}</td>
             <td>{{ "%.1f"|format(p.porcentaje or 0) }}%</td>
+            <td>
+                <a href="/presupuesto/editar/{{ p.id }}">✏️ Editar</a> |
+                <a href="/presupuesto/eliminar/{{ p.id }}" onclick="return confirm('¿Eliminar este presupuesto y sus meses asociados?')">🗑️ Eliminar</a>
+            </td>
         </tr>
         {% endfor %}
     </table>

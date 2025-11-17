@@ -3,6 +3,7 @@
 <div class="module">
     <h2>🕵️ Auditoría de Respuestas</h2>
 
+    <!-- FILTROS -->
     <form method="GET" class="form-inline">
         <select name="unidad_id">
             <option value="">-- Unidad --</option>
@@ -27,10 +28,24 @@
 
         <input type="number" name="año" placeholder="Año" min="2000" max="2100" value="{{ filtros.año }}">
         <button type="submit">🔍 Filtrar</button>
+        <a href="/auditoria/exportar" class="btn">⬇️ Exportar a Excel</a>
     </form>
 
     <hr>
 
+    <!-- CARGA MASIVA -->
+    <div style="margin:20px 0; border:1px solid #ddd; padding:10px; border-radius:8px;">
+        <h3>📤 Carga Masiva de Respuestas</h3>
+        <p>Descarga una planilla de ejemplo, completa las respuestas y súbela aquí.</p>
+        <a href="/auditoria/ejemplo" class="btn" style="background:#28a745; color:white;">📄 Descargar Ejemplo</a>
+
+        <form method="POST" action="/auditoria/importar" enctype="multipart/form-data" style="margin-top:10px;">
+            <input type="file" name="archivo" accept=".xlsx" required>
+            <button type="submit" style="background:#f97316; color:white;">⬆️ Importar Respuestas</button>
+        </form>
+    </div>
+
+    <!-- TABLA DE RESULTADOS -->
     {% if respuestas %}
     <table>
         <tr>
@@ -41,23 +56,28 @@
             <th>Presupuesto</th>
             <th>Mes/Año</th>
             <th>Valor</th>
-            <th>Fecha de Ingreso</th>
+            <th>Fecha</th>
         </tr>
         {% for r in respuestas %}
         <tr>
             <td>{{ r.id }}</td>
-            <td style="max-width:350px;white-space:pre-wrap;">{{ r.pregunta }}</td>
+            <td style="white-space:pre-wrap; max-width:350px;">{{ r.pregunta }}</td>
             <td>{{ r.unidad }}</td>
             <td>{{ r.usuario }}</td>
             <td>{{ r.presupuesto }}</td>
             <td>{{ r.mes }}/{{ r.año }}</td>
             <td>{{ r.valor }}</td>
             <td>{{ r.fecha_ingreso }}</td>
+
+            <td>
+                <a href="/auditoria/editar/{{ r.id }}">✏️ Editar</a> |
+                <a href="/auditoria/eliminar/{{ r.id }}" onclick="return confirm('¿Seguro que deseas eliminar esta respuesta?');">🗑️ Eliminar</a>
+            </td>
         </tr>
         {% endfor %}
     </table>
     {% else %}
-    <div class="alert-warning">⚠️ No se encontraron respuestas con los filtros seleccionados.</div>
+        <div class="alert-warning">⚠️ No se encontraron respuestas con los filtros seleccionados.</div>
     {% endif %}
 </div>
 {% endblock %}

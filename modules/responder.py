@@ -21,38 +21,44 @@ def responder():
     usuario_nombre = session["usuario"]
     usuario = db.execute("SELECT * FROM usuarios WHERE nombre=?", (usuario_nombre,)).fetchone()
 
-    # Verificar si hay periodo abierto
+    # Verificar periodo abierto
     periodo = db.execute("SELECT * FROM periodo WHERE abierto=1").fetchone()
     if not periodo:
         return render_template("responder.html", periodo_abierto=False)
 
     mes, año = periodo["mes"], periodo["año"]
 
-    # Procesar respuesta
+    # 🔹 GUARDAR TODAS LAS RESPUESTAS EN UN SOLO ENVÍO
     if request.method == "POST":
-        pregunta_id = request.form["pregunta_id"]
-        valor = request.form["valor"]
         fecha = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        total_guardadas = 0
+        total_omitidas = 0
 
-        # Verificar si ya existe una respuesta
-        existente = db.execute("""
-            SELECT * FROM respuestas
-            WHERE pregunta_id=? AND usuario_id=? AND mes=? AND año=?
-        """, (pregunta_id, usuario["id"], mes, año)).fetchone()
+        for key, valor in request.form.items():
+            if key.startswith("pregunta_") and valor.strip() != "":
+                pregunta_id = key.split("_")[1]
 
-        if existente:
-            flash("⚠️ Ya has respondido esta pregunta. No puedes modificarla nuevamente.", "warning")
-        else:
-            db.execute("""
-                INSERT INTO respuestas (pregunta_id, usuario_id, valor, mes, año, fecha_ingreso)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (pregunta_id, usuario["id"], valor, mes, año, fecha))
-            db.commit()
-            flash("✅ Respuesta registrada correctamente", "success")
+                # Verificar si ya existe una respuesta
+                existente = db.execute("""
+                    SELECT id FROM respuestas
+                    WHERE pregunta_id=? AND usuario_id=? AND mes=? AND año=?
+                """, (pregunta_id, usuario["id"], mes, año)).fetchone()
 
+                if existente:
+                    total_omitidas += 1
+                    continue
+
+                db.execute("""
+                    INSERT INTO respuestas (pregunta_id, usuario_id, valor, mes, año, fecha_ingreso)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (pregunta_id, usuario["id"], valor.strip(), mes, año, fecha))
+                total_guardadas += 1
+
+        db.commit()
+        flash(f"✅ Se registraron {total_guardadas} respuestas nuevas. {total_omitidas} ya estaban respondidas.", "success")
         return redirect(url_for("responder.responder"))
 
-    # Obtener preguntas asignadas al usuario
+    # 🔹 Mostrar preguntas asignadas
     preguntas = db.execute("""
         SELECT p.id, p.texto, p.tipo, p.afecta_presupuesto,
                pr.nombre AS presupuesto, u.nombre AS unidad,

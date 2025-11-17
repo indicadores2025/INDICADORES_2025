@@ -8,6 +8,7 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+
 # ============================================
 # PANEL DE GESTIÓN DE PRESUPUESTOS
 # ============================================
@@ -34,7 +35,6 @@ def presupuesto():
         flash("✅ Presupuesto creado correctamente con meses y años asociados.", "success")
         return redirect(url_for("presupuesto.presupuesto"))
 
-    # Listar presupuestos con su ejecución mensual correcta
     presupuestos_db = db.execute("SELECT id, nombre, monto_total, activo FROM presupuesto ORDER BY id DESC").fetchall()
     data_presupuestos = []
 
@@ -42,7 +42,6 @@ def presupuesto():
         meses_asoc = db.execute("SELECT mes, año FROM presupuesto_meses WHERE presupuesto_id=?", (p["id"],)).fetchall()
         lista_meses = [f"{m['mes']} {m['año']}" for m in meses_asoc]
 
-        # 🔸 Cálculo: solo descuenta las respuestas cuyos mes y año coincidan con presupuesto_meses
         ejecutado = db.execute("""
             SELECT SUM(CAST(r.valor AS FLOAT)) AS total
             FROM respuestas r
@@ -68,6 +67,50 @@ def presupuesto():
         })
 
     return render_template("presupuesto.html", presupuestos=data_presupuestos)
+
+
+# ============================================
+# EDITAR PRESUPUESTO
+# ============================================
+@presupuesto_bp.route("/presupuesto/editar/<int:id>", methods=["GET", "POST"])
+def editar_presupuesto(id):
+    db = get_db()
+
+    if request.method == "POST":
+        nombre = request.form["nombre"]
+        monto_total = float(request.form["monto_total"])
+        meses = request.form.getlist("meses")
+        años = request.form.getlist("años")
+
+        db.execute("UPDATE presupuesto SET nombre=?, monto_total=? WHERE id=?", (nombre, monto_total, id))
+        db.execute("DELETE FROM presupuesto_meses WHERE presupuesto_id=?", (id,))
+        for m in meses:
+            for a in años:
+                db.execute("INSERT INTO presupuesto_meses (presupuesto_id, mes, año) VALUES (?, ?, ?)", (id, m, a))
+        db.commit()
+
+        flash("✏️ Presupuesto actualizado correctamente", "success")
+        return redirect(url_for("presupuesto.presupuesto"))
+
+    presupuesto = db.execute("SELECT * FROM presupuesto WHERE id=?", (id,)).fetchone()
+    meses_asoc = db.execute("SELECT mes, año FROM presupuesto_meses WHERE presupuesto_id=?", (id,)).fetchall()
+    meses_asoc_lista = [f"{m['mes']}_{m['año']}" for m in meses_asoc]
+
+    return render_template("editar_presupuesto.html", presupuesto=presupuesto, meses_asoc=meses_asoc_lista)
+
+
+# ============================================
+# ELIMINAR PRESUPUESTO
+# ============================================
+@presupuesto_bp.route("/presupuesto/eliminar/<int:id>")
+def eliminar_presupuesto(id):
+    db = get_db()
+    db.execute("DELETE FROM presupuesto_meses WHERE presupuesto_id=?", (id,))
+    db.execute("DELETE FROM presupuesto WHERE id=?", (id,))
+    db.commit()
+    flash("🗑️ Presupuesto eliminado correctamente", "danger")
+    return redirect(url_for("presupuesto.presupuesto"))
+
 
 # ============================================
 # RESUMEN GLOBAL DEL SISTEMA

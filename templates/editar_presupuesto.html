@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module">
+    <h2>✏️ Editar Presupuesto</h2>
+
+    <form method="POST">
+        <label>Nombre del Presupuesto:</label>
+        <input type="text" name="nombre" value="{{ presupuesto.nombre }}" required>
+
+        <label>Periodo:</label>
+        <select name="periodo" required>
+            <option value="Mensual" {% if presupuesto.periodo == 'Mensual' %}selected{% endif %}>Mensual</option>
+            <option value="Trimestral" {% if presupuesto.periodo == 'Trimestral' %}selected{% endif %}>Trimestral</option>
+            <option value="Semestral" {% if presupuesto.periodo == 'Semestral' %}selected{% endif %}>Semestral</option>
+            <option value="Anual" {% if presupuesto.periodo == 'Anual' %}selected{% endif %}>Anual</option>
+        </select>
+
+        <label>Monto Total:</label>
+        <input type="number" name="monto_total" step="0.01" value="{{ presupuesto.monto_total }}" required>
+
+        <br>
+        <button type="submit">💾 Guardar Cambios</button>
+        <a href="/presupuesto" class="btn">⬅️ Volver</a>
+    </form>
+</div>
+{% endblock %}

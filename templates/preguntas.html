@@ -1,11 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="module">
-    <h2>Gestión de Preguntas</h2>
+    <h2>📝 Gestión de Preguntas</h2>
 
-    <!-- Formulario para agregar nueva pregunta -->
+    <!-- Botones Excel -->
+    <div style="margin-bottom: 15px;">
+        <a href="/preguntas/descargar_ejemplo" class="btn">⬇️ Descargar Ejemplo</a>
+        <form action="/preguntas/importar_excel" method="POST" enctype="multipart/form-data" style="display:inline;">
+            <input type="file" name="archivo" accept=".xlsx" required>
+            <button type="submit">📤 Importar Excel</button>
+        </form>
+        <a href="/preguntas/exportar_excel" class="btn">📄 Exportar Excel</a>
+    </div>
+
+    <!-- Formulario -->
     <form method="POST" style="margin-bottom: 20px;">
-        <textarea name="texto" rows="4" maxlength="355" placeholder="Texto de la pregunta (máx. 355 caracteres)" required></textarea>
+        <textarea name="texto" rows="3" maxlength="355" placeholder="Texto de la pregunta" required></textarea>
 
         <div class="form-inline">
             <select name="tipo" required>
@@ -16,7 +26,7 @@
                 <option value="CLP">CLP</option>
             </select>
 
-            <select name="presupuesto_id" required>
+            <select name="presupuesto_id" id="presupuesto_id">
                 <option value="">-- Presupuesto --</option>
                 {% for p in presupuestos %}
                 <option value="{{ p.id }}">{{ p.nombre }}</option>
@@ -37,16 +47,16 @@
                 {% endfor %}
             </select>
 
-            <label><input type="checkbox" name="afecta_presupuesto"> Afecta Presupuesto</label>
-            <button type="submit">Agregar</button>
+            <label><input type="checkbox" name="afecta_presupuesto" id="afecta_presupuesto" onchange="togglePresupuesto()"> Afecta Presupuesto</label>
+            <button type="submit">💾 Agregar</button>
         </div>
     </form>
 
-    <!-- Tabla de preguntas -->
+    <!-- Tabla -->
     <table border="1" width="100%" cellspacing="0" cellpadding="8">
         <tr style="background-color:#f97316;color:white;">
             <th>ID</th>
-            <th style="width:40%;">Pregunta</th>
+            <th>Pregunta</th>
             <th>Tipo</th>
             <th>Presupuesto</th>
             <th>Unidad</th>
@@ -58,7 +68,7 @@
         {% for p in preguntas %}
         <tr>
             <td>{{ p.id }}</td>
-            <td style="white-space:pre-wrap; text-align:left; max-width:420px;">{{ p.texto }}</td>
+            <td style="text-align:left;">{{ p.texto }}</td>
             <td>{{ p.tipo }}</td>
             <td>{{ p.presupuesto }}</td>
             <td>{{ p.unidad }}</td>
@@ -67,10 +77,20 @@
             <td>{{ 'Sí' if p.activo else 'No' }}</td>
             <td>
                 <a href="/preguntas/editar/{{ p.id }}">✏️ Editar</a> |
-                <a href="/preguntas/desactivar/{{ p.id }}">{{ 'Desactivar' if p.activo else 'Activar' }}</a>
+                <a href="/preguntas/eliminar/{{ p.id }}" onclick="return confirm('¿Eliminar esta pregunta definitivamente?')">🗑️ Eliminar</a>
             </td>
         </tr>
         {% endfor %}
     </table>
 </div>
+
+<script>
+function togglePresupuesto() {
+    const check = document.getElementById("afecta_presupuesto");
+    const select = document.getElementById("presupuesto_id");
+    select.disabled = !check.checked;
+    if (!check.checked) select.value = "";
+}
+window.addEventListener("DOMContentLoaded", togglePresupuesto);
+</script>
 {% endblock %}
